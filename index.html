@@ -35,8 +35,9 @@
   .field.full{grid-column:1/-1}
   label{font-size:13px;font-weight:600}
   label small{font-weight:400;color:var(--muted)}
-  input[type=text],input[type=file]{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
-  input[type=text]:focus{outline:2px solid var(--primary);border-color:transparent}
+  input[type=text],input[type=file],input[type=password],input[type=search],textarea{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
+  input[type=text]:focus,input[type=password]:focus,input[type=search]:focus,textarea:focus{outline:2px solid var(--primary);border-color:transparent}
+  textarea{resize:vertical;min-height:64px;line-height:1.5}
   select{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%;cursor:pointer}
   select:focus{outline:2px solid var(--primary);border-color:transparent}
   .colorrow{display:flex;align-items:center;gap:10px}
@@ -109,19 +110,11 @@
 
   /* SWOT */
   .swot{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .quad{border-radius:14px;padding:18px 20px;border:1px solid var(--line)}
-  .quad h4{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .quad{border-radius:14px;padding:18px 20px;border:1px solid color-mix(in srgb,var(--quad-c,var(--primary)) 28%,#fff);background:color-mix(in srgb,var(--quad-c,var(--primary)) 8%,#fff)}
+  .quad h4{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;color:color-mix(in srgb,var(--quad-c,var(--primary)) 60%,#000)}
   .quad ul{list-style:none;display:flex;flex-direction:column;gap:9px}
   .quad li{font-size:13px;padding-left:18px;position:relative;line-height:1.45}
-  .quad li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:50%}
-  .q-s{background:color-mix(in srgb,var(--sec1) 7%,#fff);border-color:color-mix(in srgb,var(--sec1) 30%,#fff)}
-  .q-s h4{color:color-mix(in srgb,var(--sec1) 55%,#000)} .q-s li::before{background:var(--sec1)}
-  .q-w{background:#fef6f6;border-color:#fdd}
-  .q-w h4{color:#b91c1c}.q-w li::before{background:#ef4444}
-  .q-o{background:color-mix(in srgb,var(--primary) 6%,#fff);border-color:color-mix(in srgb,var(--primary) 25%,#fff)}
-  .q-o h4{color:var(--primary)}.q-o li::before{background:var(--primary)}
-  .q-t{background:color-mix(in srgb,var(--sec2) 8%,#fff);border-color:color-mix(in srgb,var(--sec2) 30%,#fff)}
-  .q-t h4{color:color-mix(in srgb,var(--sec2) 50%,#000)}.q-t li::before{background:var(--sec2)}
+  .quad li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:50%;background:var(--quad-c,var(--primary))}
 
   /* Executive summary */
   .exec{background:linear-gradient(160deg,color-mix(in srgb,var(--primary) 6%,#fff),#fff);border:1px solid color-mix(in srgb,var(--primary) 22%,#fff);border-left:6px solid var(--primary)}
@@ -167,7 +160,18 @@
   .saved{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px;display:none}
   .saved.show{display:block}
   .saved h3{font-size:15px;font-weight:700;margin-bottom:12px}
-  .savedlist{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto}
+  .savedhdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .savedhdr h3{margin-bottom:0}
+  .savedcount{font-size:12px;color:var(--muted);font-weight:500}
+  .savedsearch{position:relative;flex:1;min-width:200px}
+  .savedsearch input{width:100%;font-family:inherit;font-size:13px;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;background:#fff}
+  .savedsearch input:focus{outline:2px solid var(--primary);border-color:transparent}
+  .savedsearch::before{content:"🔍";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;opacity:.6}
+  .savedlist{display:flex;flex-direction:column;gap:8px}
+  .savedlist.scroll-on{max-height:calc(72px * 5 + 32px);overflow-y:auto;padding-right:6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-top:8px;padding-bottom:8px}
+  .savedlist.scroll-on::-webkit-scrollbar{width:6px}
+  .savedlist.scroll-on::-webkit-scrollbar-thumb{background:#cfd3df;border-radius:3px}
+  .savedempty{color:var(--muted);font-size:13px;padding:14px;text-align:center;background:#fafbfd;border-radius:8px}
   .savedrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px}
   .savedrow .info{font-size:13.5px}
   .savedrow .info b{font-weight:600}
@@ -273,6 +277,9 @@
   .fpname{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fpname.ok{color:#0a8f5b;font-weight:600}
   .fpchk{font-size:13px;padding:9px 16px}
+  .takeaway{margin-top:16px;background:color-mix(in srgb,var(--primary) 6%,#fff);border:1px solid color-mix(in srgb,var(--primary) 18%,#fff);border-left:4px solid var(--primary);border-radius:0 10px 10px 0;padding:12px 16px;font-size:13.5px;line-height:1.65}
+  .takeaway b{color:var(--primary)}
+  .takeaway .tlabel{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--primary);margin-bottom:5px}
 </style>
 </head>
 <body>
@@ -308,7 +315,10 @@
 
   <!-- saved reports drawer -->
   <div class="saved" id="savedPanel">
-    <h3>📂 Báo cáo đã lưu</h3>
+    <div class="savedhdr">
+      <h3>📂 Báo cáo đã lưu <span class="savedcount" id="savedCount"></span></h3>
+      <div class="savedsearch"><input type="search" id="savedSearch" placeholder="Tìm theo tên Project hoặc domain…" oninput="filterSaved()"></div>
+    </div>
     <div class="savedlist" id="savedList"><p style="color:var(--muted);font-size:13px">Đang tải…</p></div>
   </div>
 
@@ -388,6 +398,11 @@
               </div>
               <span class="hint">Key lưu trong trình duyệt của bạn &amp; gọi thẳng Anthropic — KHÔNG qua server chúng tôi. <a href="guide.html" target="_blank" style="color:#00ffaa;font-weight:600">Chưa có key? Xem hướng dẫn →</a></span>
             </div>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label>Ghi chú riêng cho Claude <small>(tùy chọn — hướng dẫn cho riêng báo cáo này)</small></label>
+            <textarea id="aiNote" rows="3" placeholder="VD: Khách hàng là agency B2B, ưu tiên góc nhìn growth marketing. Tránh thuật ngữ kỹ thuật quá sâu. Nhấn mạnh cơ hội Paid Search trong Q3..."></textarea>
+            <span class="hint">Claude sẽ tham khảo phần này khi viết SWOT &amp; kết luận. Bỏ trống nếu không cần.</span>
           </div>
           <span class="hint" id="aiStatus" style="color:#00ffaa;display:block;margin-top:8px;font-weight:600"></span>
         </div>
@@ -644,12 +659,13 @@ const TONE_LABEL={
   '1':'KHEN — nhấn điểm mạnh và cơ hội, giọng tích cực',
   '2':'KHEN MẠNH — khẳng định vị thế nổi bật, giọng tự tin, truyền cảm hứng',
 };
-function buildAIPrompt(self,competitors,tone){
+function buildAIPrompt(self,competitors,tone,note){
   const toneKey=String(parseInt(tone)||0);
   const fmtDomain=o=>`- ${o.domain}: DR ${o.dr??'—'}, UR ${o.ur??'—'}, Organic Keywords ${o.okw??'—'} (Top3: ${o.kTop3??'—'}), `+
     `Organic Traffic ${o.traffic??'—'}/tháng, Traffic Value $${o.value??'—'}, `+
     `Referring Domains ${o.refAll??'—'} (followed ${o.refFol??'—'}), Backlinks ${o.blAll??'—'}, `+
     `Paid Traffic ${o.ptraffic??'—'}, Top country ${o.countries??'—'}`;
+  const noteBlock=(note&&note.trim())?`\n\nGHI CHÚ RIÊNG TỪ NGƯỜI TẠO BÁO CÁO (BẮT BUỘC tham khảo và lồng vào nhận định khi phù hợp, không được bỏ qua):\n"""\n${note.trim()}\n"""\n`:'';
   return `Bạn là chuyên gia tư vấn SEO cao cấp tại một agency. Viết phần nhận định cho báo cáo phân tích cạnh tranh SEO bằng TIẾNG VIỆT.
 
 WEBSITE NỘI TẠI (của khách hàng):
@@ -658,7 +674,7 @@ ${fmtDomain(self)}
 ĐỐI THỦ:
 ${competitors.map(fmtDomain).join('\n')}
 
-ĐỊNH HƯỚNG GIỌNG ĐÁNH GIÁ: ${TONE_LABEL[toneKey]}
+ĐỊNH HƯỚNG GIỌNG ĐÁNH GIÁ: ${TONE_LABEL[toneKey]}${noteBlock}
 
 YÊU CẦU:
 1. Mọi nhận định phải DỰA ĐÚNG trên số liệu ở trên — không bịa số, không mâu thuẫn với dữ liệu.
@@ -687,7 +703,8 @@ async function getAINarrative(){
   const key=((($('#apiKey')||{}).value)||'').trim();
   if(!key) throw new Error('Chưa nhập API key');
   const model=($('#modelSel')&&$('#modelSel').value)||'claude-haiku-4-5';
-  const prompt=buildAIPrompt(STATE.self,STATE.comps,$('#tone').value);
+  const note=((($('#aiNote')||{}).value)||'').trim();
+  const prompt=buildAIPrompt(STATE.self,STATE.comps,$('#tone').value,note);
   const res=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{
@@ -723,54 +740,126 @@ const compColor=i=>PALETTE[(i%(PALETTE.length-1))+1]||'#9aa0b5';
 =================================================================== */
 function analyze(self,comps,all){
   const avg=k=>{const v=comps.map(c=>c[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b)/v.length:null;};
+  const med=k=>{const v=comps.map(c=>c[k]).filter(x=>x!=null).sort((a,b)=>a-b);if(!v.length)return null;const m=Math.floor(v.length/2);return v.length%2?v[m]:(v[m-1]+v[m])/2;};
+  const max=k=>{const v=comps.map(c=>c[k]).filter(x=>x!=null);return v.length?Math.max(...v):null;};
   const rank=(k,low=false)=>{const v=all.map(o=>o[k]).filter(x=>x!=null).sort((a,b)=>low?a-b:b-a);return self[k]==null?null:v.indexOf(self[k])+1;};
+  const pctile=k=>{const v=all.map(o=>o[k]).filter(x=>x!=null).sort((a,b)=>a-b);if(self[k]==null||!v.length)return null;const below=v.filter(x=>x<self[k]).length;return Math.round(below/v.length*100);};
+  const leader=k=>{const v=all.filter(o=>o[k]!=null).sort((a,b)=>b[k]-a[k])[0];return v||null;};
   const S=[],W=[],O=[],T=[];
+  const gaps=[]; // chiến lược pillar dựa trên các gap lớn nhất
 
-  const drAvg=avg('dr');
+  /* --- AUTHORITY / DR --- */
+  const drAvg=avg('dr'),drMax=max('dr'),drRank=rank('dr');
   if(self.dr!=null&&drAvg!=null){
-    if(self.dr>=drAvg) S.push(`Domain Rating ${self.dr} cao hơn trung bình đối thủ (${drAvg.toFixed(0)}) — nền tảng uy tín tốt.`);
-    else W.push(`Domain Rating ${self.dr} thấp hơn trung bình đối thủ (${drAvg.toFixed(0)}) — cần đẩy mạnh link building chất lượng.`);
+    const gap=self.dr-drAvg;
+    if(gap>=5) S.push(`Domain Rating <b>${self.dr}</b> vượt trung bình đối thủ <b>+${gap.toFixed(0)} điểm</b> (TB ${drAvg.toFixed(0)}) — nền tảng uy tín & sức mạnh link rõ ràng.`);
+    else if(gap<=-5){W.push(`Domain Rating <b>${self.dr}</b> thấp hơn TB đối thủ <b>${gap.toFixed(0)} điểm</b> (TB ${drAvg.toFixed(0)}) — uy tín backlink chưa đủ đè đối thủ trên SERP cạnh tranh.`);gaps.push({k:'authority',score:Math.abs(gap)*2});}
+    else S.push(`Domain Rating ${self.dr} ngang ngửa trung bình đối thủ (${drAvg.toFixed(0)}) — vị thế authority cân bằng.`);
   }
-  const refAvg=avg('refAll');
+  if(drRank&&drRank===1) S.push(`Xếp hạng <b>#1/${all.length}</b> về Domain Rating trong nhóm — lợi thế tin cậy từ search engine.`);
+  else if(drRank&&drRank>=Math.ceil(all.length*.75)) W.push(`DR đứng <b>${drRank}/${all.length}</b> — gần cuối nhóm về sức mạnh link, ảnh hưởng đến khả năng leo top từ khóa cạnh tranh.`);
+
+  /* --- REFERRING DOMAINS --- */
+  const refAvg=avg('refAll'),refMax=max('refAll'),refLeader=leader('refAll');
   if(self.refAll!=null&&refAvg!=null){
-    if(self.refAll>=refAvg) S.push(`${fmt(self.refAll)} referring domains, vượt trung bình đối thủ (${fmt(refAvg)}).`);
-    else {W.push(`Chỉ ${fmt(self.refAll)} referring domains, dưới trung bình (${fmt(refAvg)}).`);
-          O.push(`Thu hẹp khoảng cách ~${fmt(refAvg-self.refAll)} referring domains để bắt kịp mặt bằng đối thủ.`);}
+    const gap=self.refAll-refAvg, pct=refAvg?((self.refAll/refAvg-1)*100):0;
+    if(gap>=0) S.push(`<b>${fmt(self.refAll)}</b> referring domains, <b>+${pct.toFixed(0)}%</b> so với TB đối thủ (${fmt(refAvg)}) — độ phủ link đa dạng.`);
+    else{W.push(`Chỉ <b>${fmt(self.refAll)}</b> referring domains, thấp hơn TB <b>${(-pct).toFixed(0)}%</b> (TB ${fmt(refAvg)}) — phạm vi tham chiếu hẹp hơn nhóm.`);
+         O.push(`Thu hẹp khoảng cách ~<b>${fmt(refAvg-self.refAll)}</b> referring domains qua digital PR, guest post chuyên ngành & link báo chí để bắt kịp mặt bằng.`);
+         gaps.push({k:'refdom',score:Math.min((-pct)/2,40)});}
   }
   if(self.folShare!=null){
-    if(self.folShare<60) W.push(`Tỉ lệ referring domains followed chỉ ${self.folShare.toFixed(0)}% — nhiều link không truyền sức mạnh; rà soát hồ sơ backlink.`);
-    else S.push(`${self.folShare.toFixed(0)}% referring domains là followed — hồ sơ backlink lành mạnh.`);
+    if(self.folShare<55){W.push(`Tỉ lệ followed chỉ <b>${self.folShare.toFixed(0)}%</b> — nhiều link không truyền sức mạnh; cần rà soát disavow & ưu tiên nguồn followed.`);gaps.push({k:'linkqual',score:60-self.folShare});}
+    else if(self.folShare>=75) S.push(`<b>${self.folShare.toFixed(0)}%</b> referring domains là followed — hồ sơ backlink lành mạnh, sức mạnh được truyền dẫn tốt.`);
   }
-  const trAvg=avg('traffic');
+  if(self.refIP!=null&&self.refAll!=null&&self.refAll>0){
+    const ipRatio=self.refIP/self.refAll;
+    if(ipRatio<0.6) W.push(`Tỉ lệ IP duy nhất / ref domains chỉ <b>${(ipRatio*100).toFixed(0)}%</b> — nhiều backlink xuất phát từ cùng IP/host, hồ sơ kém đa dạng.`);
+    else if(ipRatio>=0.85) S.push(`Đa dạng IP nguồn backlink rất tốt (<b>${(ipRatio*100).toFixed(0)}%</b> ref domains đến từ IP riêng).`);
+  }
+
+  /* --- TRAFFIC & SHARE OF VOICE --- */
+  const trAvg=avg('traffic'),trMed=med('traffic'),trRank=rank('traffic'),totTr=all.reduce((s,o)=>s+(o.traffic||0),0)||1,sov=(self.traffic||0)/totTr*100;
   if(self.traffic!=null&&trAvg!=null){
-    if(self.traffic>=trAvg) S.push(`Organic traffic ${fmt(self.traffic)}/tháng, trên trung bình đối thủ (${fmt(trAvg)}).`);
-    else W.push(`Organic traffic ${fmt(self.traffic)}/tháng, dưới trung bình đối thủ (${fmt(trAvg)}).`);
+    const gap=self.traffic-trAvg;
+    if(gap>=0) S.push(`Organic traffic <b>${fmt(self.traffic)}</b>/tháng, vượt trung bình đối thủ (TB ${fmt(trAvg)}) — share of voice <b>${sov.toFixed(1)}%</b> trong nhóm.`);
+    else{W.push(`Organic traffic <b>${fmt(self.traffic)}</b>/tháng, dưới TB đối thủ (${fmt(trAvg)}) — share of voice chỉ <b>${sov.toFixed(1)}%</b>.`);
+         gaps.push({k:'traffic',score:Math.min((1-self.traffic/Math.max(trAvg,1))*100,50)});}
   }
-  const kwAvg=avg('okw');
-  if(self.okw!=null&&kwAvg!=null&&self.okw<kwAvg)
-    O.push(`Đối thủ xếp hạng trung bình ${fmt(kwAvg)} từ khóa vs bạn ${fmt(self.okw)} — còn dư địa mở rộng nội dung theo cụm chủ đề.`);
+  if(trRank&&trRank<=2&&all.length>=3) S.push(`Đứng <b>#${trRank}/${all.length}</b> về organic traffic — vị thế dẫn dắt thị phần hiển thị.`);
+
+  /* --- KEYWORD DEPTH & EFFICIENCY --- */
+  const kwAvg=avg('okw'),kwLeader=leader('okw');
+  if(self.okw!=null&&kwAvg!=null){
+    if(self.okw<kwAvg){
+      const need=Math.round(kwAvg-self.okw);
+      O.push(`Đối thủ xếp hạng TB <b>${fmt(kwAvg)}</b> từ khóa vs bạn <b>${fmt(self.okw)}</b> — còn dư địa ~<b>${fmt(need)}</b> từ khóa để mở rộng nội dung theo cụm chủ đề.`);
+      gaps.push({k:'content',score:Math.min((1-self.okw/Math.max(kwAvg,1))*100,45)});
+    }else S.push(`Phủ <b>${fmt(self.okw)}</b> từ khóa organic, vượt TB đối thủ (${fmt(kwAvg)}) — kho nội dung sâu rộng.`);
+  }
   if(self.top3Share!=null){
-    if(self.top3Share>=35) S.push(`${self.top3Share.toFixed(0)}% từ khóa nằm Top 3 — độ phù hợp & thẩm quyền nội dung cao.`);
-    else O.push(`Chỉ ${self.top3Share.toFixed(0)}% từ khóa ở Top 3 — tối ưu on-page & internal link để đẩy từ khóa trang 1 lên Top 3.`);
+    const t3Avg=avg('top3Share');
+    if(self.top3Share>=40) S.push(`<b>${self.top3Share.toFixed(0)}%</b> từ khóa nằm Top 3${t3Avg!=null?` (TB nhóm ${t3Avg.toFixed(0)}%)`:''} — độ phù hợp & thẩm quyền nội dung cao, ăn lượng click chính.`);
+    else if(self.top3Share<25){W.push(`Chỉ <b>${self.top3Share.toFixed(0)}%</b> từ khóa ở Top 3${t3Avg!=null?` (TB ${t3Avg.toFixed(0)}%)`:''} — phần lớn nội dung kẹt ở nửa dưới trang 1, mất phần lớn click tới đối thủ Top 3.`);gaps.push({k:'top3',score:(30-self.top3Share)});}
+    O.push(`Đẩy nhóm từ khóa hạng 4–10 lên Top 3 (tối ưu on-page, internal link, snippet) là đòn bẩy traffic nhanh nhất — mỗi % chuyển dịch tương đương vài nghìn click/tháng.`);
   }
   const effAvg=avg('trPerKw');
-  if(self.trPerKw!=null&&effAvg!=null&&self.trPerKw<effAvg)
-    O.push(`Traffic/từ khóa (${self.trPerKw.toFixed(1)}) thấp hơn đối thủ (${effAvg.toFixed(1)}) — nhắm nhóm từ khóa volume cao hơn hoặc cải thiện CTR.`);
+  if(self.trPerKw!=null&&effAvg!=null){
+    if(self.trPerKw<effAvg*0.7) O.push(`Traffic/từ khóa của bạn <b>${self.trPerKw.toFixed(1)}</b> chỉ bằng ~${(self.trPerKw/effAvg*100).toFixed(0)}% mức TB đối thủ (${effAvg.toFixed(1)}) — đang đeo từ khóa volume thấp; cần dịch chuyển sang chùm từ khóa volume cao + tối ưu CTR (title, meta, schema).`);
+    else if(self.trPerKw>effAvg*1.3) S.push(`Traffic/từ khóa <b>${self.trPerKw.toFixed(1)}</b> cao hơn TB đối thủ ${(self.trPerKw/effAvg*100-100).toFixed(0)}% — nhắm trúng từ khóa volume cao & CTR tốt.`);
+  }
+
+  /* --- TRAFFIC VALUE (commercial intent) --- */
+  if(self.value!=null&&self.traffic!=null&&self.traffic>0){
+    const valAvg=avg('value'),vpv=self.value/self.traffic;
+    const compsVpv=comps.filter(c=>c.value!=null&&c.traffic).map(c=>c.value/c.traffic);
+    const vpvAvg=compsVpv.length?compsVpv.reduce((a,b)=>a+b,0)/compsVpv.length:null;
+    if(vpvAvg!=null){
+      if(vpv<vpvAvg*0.7) O.push(`Giá trị traffic / lượt truy cập của bạn (<b>$${vpv.toFixed(2)}</b>) thấp hơn TB đối thủ ($${vpvAvg.toFixed(2)}) — đang hút nhiều từ khóa thông tin; cân bằng thêm bằng nhóm từ khóa thương mại / chuyển đổi cao.`);
+      else if(vpv>vpvAvg*1.3) S.push(`Giá trị traffic / lượt truy cập <b>$${vpv.toFixed(2)}</b>, cao hơn TB đối thủ — phễu từ khóa nghiêng mạnh về thương mại / chuyển đổi.`);
+    }
+  }
+
+  /* --- PAID SEARCH --- */
+  const paidComps=comps.filter(c=>c.ptraffic&&c.ptraffic>0);
+  if(!self.ptraffic||self.ptraffic===0){
+    if(paidComps.length>=Math.ceil(comps.length/2))
+      O.push(`<b>${paidComps.length}/${comps.length}</b> đối thủ đang chạy Paid Search — bạn chưa khai thác kênh trả phí: test Google Ads cho cluster từ khóa thương mại để phủ kép SERP (organic + paid).`);
+    else O.push(`Paid Search còn là khoảng trống — có thể tiên phong test Google Ads cho từ khóa thương mại giá trị cao trước khi nhóm đối thủ phủ kín.`);
+  }else{
+    const paidShare=self.ptraffic/(self.traffic+self.ptraffic)*100;
+    if(paidShare>30) W.push(`Paid chiếm <b>${paidShare.toFixed(0)}%</b> tổng traffic — phụ thuộc trả phí cao, rủi ro khi cắt ngân sách; cần đẩy organic thay thế dần.`);
+    else S.push(`Đang vận hành song song Organic & Paid (Paid ~${paidShare.toFixed(0)}%) — phủ cả SERP miễn phí lẫn trả phí.`);
+  }
+
+  /* --- COMPETITOR-SPECIFIC THREATS --- */
   comps.forEach(c=>{
     if(c.dr!=null&&self.dr!=null&&c.dr-self.dr>=10)
-      T.push(`${c.domain} có DR ${c.dr} (cao hơn bạn ${c.dr-self.dr} điểm) — đối thủ link-authority mạnh.`);
+      T.push(`<b>${c.domain}</b> có DR <b>${c.dr}</b> (cao hơn bạn ${c.dr-self.dr} điểm) — link-authority vượt trội, dễ chiếm Top SERP cạnh tranh.`);
     if(c.traffic!=null&&self.traffic!=null&&c.traffic>self.traffic*1.5)
-      T.push(`${c.domain} có organic traffic ${fmt(c.traffic)} (gấp ~${(c.traffic/self.traffic).toFixed(1)}× bạn) — áp lực thị phần tìm kiếm.`);
+      T.push(`<b>${c.domain}</b> đạt <b>${fmt(c.traffic)}</b> traffic (gấp <b>${(c.traffic/self.traffic).toFixed(1)}×</b> bạn) — áp lực thị phần hiển thị rõ rệt.`);
+    if(c.refAll!=null&&self.refAll!=null&&c.refAll>self.refAll*2)
+      T.push(`<b>${c.domain}</b> có <b>${fmt(c.refAll)}</b> referring domains (gấp ${(c.refAll/self.refAll).toFixed(1)}× bạn) — hồ sơ backlink khó cạnh tranh trực diện.`);
     if(c.ptraffic!=null&&c.ptraffic>0&&(!self.ptraffic||self.ptraffic===0))
-      T.push(`${c.domain} đang chạy paid search (${fmt(c.ptraffic)} traffic) trong khi bạn chưa — họ phủ cả kênh trả phí.`);
+      T.push(`<b>${c.domain}</b> đang chạy Paid Search (${fmt(c.ptraffic)} traffic) trong khi bạn chưa — họ phủ cả kênh trả phí.`);
   });
-  if(!self.ptraffic||self.ptraffic===0)
-    O.push(`Bạn gần như chưa khai thác Paid Search — có thể test Google Ads cho nhóm từ khóa thương mại giá trị cao.`);
 
-  const dedup=a=>[...new Set(a)].slice(0,6);
+  /* --- GEO FOCUS --- */
+  const cc=s=>{const m=String(s||'').match(/([a-z]{2})/i);return m?m[1].toUpperCase():null;};
+  const selfC=cc(self.countries);
+  if(selfC){
+    const sameMarket=comps.filter(c=>cc(c.countries)===selfC);
+    if(sameMarket.length>=Math.ceil(comps.length/2)) T.push(`<b>${sameMarket.length}/${comps.length}</b> đối thủ cùng tập trung thị trường <b>${selfC}</b> — cạnh tranh trực diện theo địa lý, biên độ chuyển đổi từng % thị phần đều rất khó.`);
+    else if(sameMarket.length===0) O.push(`Đối thủ phân tán thị trường khác — bạn gần như độc chiếm <b>${selfC}</b> trong nhóm so sánh, có thể khai thác sâu local SEO & nội dung địa phương.`);
+  }
+
+  const dedup=a=>[...new Set(a)].slice(0,7);
   return {S:dedup(S),W:dedup(W),O:dedup(O),T:dedup(T),
-    drAvg,trAvg,refAvg,kwAvg,
-    trRank:rank('traffic'),drRank:rank('dr'),refRank:rank('refAll'),N:all.length};
+    drAvg,trAvg,refAvg,kwAvg,sov,
+    trRank:rank('traffic'),drRank:rank('dr'),refRank:rank('refAll'),
+    trPct:pctile('traffic'),drPct:pctile('dr'),refPct:pctile('refAll'),
+    gaps:gaps.sort((a,b)=>b.score-a.score),
+    N:all.length};
 }
 
 /* ===================================================================
@@ -828,35 +917,64 @@ function scatter(self,all){
 }
 
 /* ----- section content builders ----- */
-function blkKwdist(self){
+function takeaway(html){return `<div class="takeaway"><span class="tlabel">Nhận xét</span><span>${html}</span></div>`;}
+function blkKwdist(self,comps,all){
   const kd=[['Top 3','kTop3'],['4–10','k410'],['11–20','k1120'],['21–50','k2150'],['51+','k51']];
-  const cols=[PALETTE[0],'#8a7bf8',PALETTE[1]||'#22d39a',PALETTE[2]||'#f59e0b',PALETTE[3]||'#ef4444'];
+  const cols=[PALETTE[0],PALETTE[1]||'#00ffaa',PALETTE[2]||'#ffce04',PALETTE[3]||'#15cfff','#c7cad6'];
   const segs=kd.map(([lbl,k],i)=>({label:lbl,value:self[k]||0,color:cols[i]}));
   const tot=segs.reduce((s,x)=>s+x.value,0)||1;
   const bar=segs.map(s=>`<i style="width:${s.value/tot*100}%;background:${s.color}" title="${s.label}: ${fmt(s.value)}"></i>`).join('');
-  const note=self.top3Share!=null?`<p class="desc" style="margin-top:14px">${self.top3Share>=35?`<b>${self.top3Share.toFixed(0)}%</b> từ khóa nằm Top 3 — nền nội dung & thẩm quyền tốt.`:`Chỉ <b>${self.top3Share.toFixed(0)}%</b> từ khóa ở Top 3; phần lớn còn ở trang 1 phía dưới — dư địa tối ưu on-page để đẩy lên Top 3.`}</p>`:'';
-  return `<div class="stackbar">${bar}</div><div class="stk-lbl"><span style="color:var(--muted);font-weight:500">Tổng ${fmt(tot)} từ khóa của ${self.domain}</span></div>${legend(segs.map(s=>({label:s.label,color:s.color,pct:Math.round(s.value/tot*100)})))}${note}`;
+  // so sánh đối thủ
+  const cT3=(comps||[]).map(c=>c.top3Share).filter(x=>x!=null);
+  const avgT3=cT3.length?cT3.reduce((a,b)=>a+b)/cT3.length:null;
+  const bestT3=[...(all||[self])].filter(o=>o.top3Share!=null).sort((a,b)=>b.top3Share-a.top3Share)[0];
+  let cmt='';
+  if(self.top3Share!=null){
+    cmt+=`<b>${self.domain}</b> có <b>${self.top3Share.toFixed(0)}%</b> từ khóa nằm Top 3`;
+    if(avgT3!=null)cmt+=`, ${self.top3Share>=avgT3?'cao hơn':'thấp hơn'} mức trung bình đối thủ (<b>${avgT3.toFixed(0)}%</b>)`;
+    cmt+='. ';
+  }
+  if(bestT3&&bestT3!==self&&bestT3.top3Share!=null)cmt+=`Đối thủ <b>${bestT3.domain}</b> tập trung từ khóa Top 3 tốt nhất nhóm (${bestT3.top3Share.toFixed(0)}%) — đáng tham khảo về độ phù hợp nội dung. `;
+  else if(bestT3===self)cmt+=`Đây là tỉ lệ Top 3 tốt nhất nhóm — lợi thế thẩm quyền nội dung rõ rệt. `;
+  cmt+=(self.top3Share!=null&&self.top3Share<35)?`Phần lớn từ khóa của bạn còn ở trang 1 phía dưới — ưu tiên tối ưu on-page & internal link để đẩy lên Top 3, nơi tập trung phần lớn lượt click.`:`Hãy tận dụng nền tảng Top 3 vững chắc để mở rộng sang các cụm chủ đề mới.`;
+  return `<div class="stackbar">${bar}</div><div class="stk-lbl"><span style="color:var(--muted);font-weight:500">Tổng ${fmt(tot)} từ khóa của ${self.domain}</span></div>${legend(segs.map(s=>({label:s.label,color:s.color,pct:Math.round(s.value/tot*100)})))}${takeaway(cmt)}`;
 }
 function blkBacklink(self,comps,all){
   const defs=[['Referring domains','refAll',false,'n'],['— Followed','refFol',false,'n'],['— Not followed','refNo',true,'n'],
     ['% Followed','folShare',false,'pct'],['Backlinks','blAll',false,'n'],['Ref. IPs','refIP',false,'n'],['Subnets (đa dạng IP)','refSub',false,'n'],
     ['Backlinks / Ref domain','blPerRef',false,'x1'],['Outgoing links','outLinkAll',true,'n']];
-  let note='';
-  if(self.folShare!=null)note+=`Tỉ lệ followed <b>${self.folShare.toFixed(0)}%</b> ${self.folShare>=60?'— hồ sơ link lành mạnh.':'— hơi thấp, nhiều link không truyền sức mạnh.'} `;
-  if(self.blPerRef!=null)note+=`Trung bình <b>${self.blPerRef.toFixed(1)}</b> backlink/referring domain.`;
-  return miniTable(defs,self,comps,all)+(note?`<p class="desc" style="margin-top:14px">${note}</p>`:'');
+  const avg=k=>{const v=comps.map(c=>c[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b)/v.length:null;};
+  let cmt='';
+  const refAvg=avg('refAll');
+  if(self.refAll!=null&&refAvg!=null)cmt+=`<b>${self.domain}</b> có <b>${fmt(self.refAll)}</b> referring domains, ${self.refAll>=refAvg?'trên':'dưới'} trung bình đối thủ (${fmt(refAvg)}). `;
+  if(self.folShare!=null)cmt+=`Tỉ lệ followed <b>${self.folShare.toFixed(0)}%</b> ${self.folShare>=60?'— hồ sơ link lành mạnh':'— hơi thấp, nhiều link không truyền sức mạnh'}. `;
+  if(self.blPerRef!=null)cmt+=`Trung bình <b>${self.blPerRef.toFixed(1)}</b> backlink/referring domain. `;
+  const blLeader=[...all].filter(o=>o.refAll!=null).sort((a,b)=>b.refAll-a.refAll)[0];
+  if(blLeader&&blLeader!==self)cmt+=`<b>${blLeader.domain}</b> dẫn đầu độ phủ backlink (${fmt(blLeader.refAll)} ref domains) — authority mạnh, cần theo dõi và rút ngắn khoảng cách bằng digital PR & link báo chí.`;
+  else if(blLeader===self)cmt+=`Bạn đang dẫn đầu nhóm về độ phủ backlink — hãy giữ chất lượng và thanh lọc link độc để duy trì lợi thế.`;
+  return miniTable(defs,self,comps,all)+takeaway(cmt);
 }
 function blkChannel(self,comps,all){
   const rows=all.map(o=>{const org=o.traffic||0,paid=o.ptraffic||0,tot=org+paid||1;return{o,org,paid,po:org/tot*100,pp:paid/tot*100};});
   const bars=rows.map(r=>`<div style="margin-bottom:13px">
     <div class="stk-lbl" style="margin-bottom:5px"><span style="font-weight:${r.o===self?700:500}">${r.o.domain}${r.o===self?' (Bạn)':''}</span><span style="color:var(--muted)">Paid ${r.pp.toFixed(1)}%</span></div>
     <div class="stackbar"><i style="width:${r.po}%;background:${PALETTE[0]}" title="Organic ${fmt(r.org)}"></i><i style="width:${r.pp}%;background:${PALETTE[2]||'#f59e0b'}" title="Paid ${fmt(r.paid)}"></i></div></div>`).join('');
-  const note=(!self.ptraffic||self.ptraffic===0)?`<b>${self.domain}</b> gần như chưa dùng Paid Search — cơ hội test Google Ads cho từ khóa thương mại; hoặc là lợi thế chi phí nếu organic đã đủ mạnh.`:`<b>${self.domain}</b> đang kết hợp cả Organic & Paid.`;
-  return `${bars}${legend([{label:'Organic',color:PALETTE[0]},{label:'Paid',color:PALETTE[2]||'#f59e0b'}])}<p class="desc" style="margin-top:14px">${note}</p>`;
+  const paidComps=comps.filter(c=>c.ptraffic&&c.ptraffic>0);
+  const selfNoPaid=(!self.ptraffic||self.ptraffic===0);
+  let cmt=selfNoPaid?`<b>${self.domain}</b> gần như chưa khai thác Paid Search`:`<b>${self.domain}</b> đang chạy song song Organic & Paid`;
+  if(paidComps.length)cmt+=` — trong khi <b>${paidComps.length}/${comps.length}</b> đối thủ (${paidComps.map(c=>c.domain).join(', ')}) đang phủ cả kênh trả phí`;
+  else cmt+=` — và hầu như cả nhóm cũng phụ thuộc Organic`;
+  cmt+='. ';
+  cmt+=selfNoPaid?`Có thể test Google Ads cho nhóm từ khóa thương mại giá trị cao để tăng độ phủ SERP ngắn hạn; hoặc xem đây là lợi thế chi phí nếu organic đã đủ mạnh.`:`Tối ưu phân bổ ngân sách paid vào từ khóa chuyển đổi cao, để organic gánh nhóm từ khóa thông tin.`;
+  return `${bars}${legend([{label:'Organic',color:PALETTE[0]},{label:'Paid',color:PALETTE[2]||'#f59e0b'}])}${takeaway(cmt)}`;
 }
 function blkMatrix(self,all){
   const note=`Trục ngang = Domain Rating (sức mạnh link), trục dọc = Organic Traffic. Góc trên-phải là vị thế lý tưởng. Bong bóng <b>màu chính</b> là ${self.domain}.`;
-  return `${scatter(self,all)}<p class="desc" style="margin-top:10px;text-align:center">${note}</p>`;
+  const topRight=all.filter(o=>o!==self&&(o.dr||0)>=(self.dr||0)&&(o.traffic||0)>=(self.traffic||0));
+  let cmt;
+  if(topRight.length===0)cmt=`<b>${self.domain}</b> đang ở nhóm dẫn đầu — không đối thủ nào vừa mạnh hơn về Domain Rating vừa nhiều traffic hơn. Trọng tâm là giữ vững và mở rộng khoảng cách.`;
+  else cmt=`Có <b>${topRight.length}</b> đối thủ (${topRight.map(o=>o.domain).join(', ')}) nằm ở phía trên-phải <b>${self.domain}</b> — tức vừa khỏe hơn về backlink, vừa nhiều traffic hơn. Đây là nhóm benchmark cần bám đuổi: nâng DR (link building) song song mở rộng nội dung để dịch chuyển bong bóng của bạn lên góc phải.`;
+  return `${scatter(self,all)}<p class="desc" style="margin-top:10px;text-align:center">${note}</p>${takeaway(cmt)}`;
 }
 function blkOpportunity(self,comps,all){
   const leader=[...all].sort((a,b)=>(b.traffic||0)-(a.traffic||0))[0];
@@ -877,8 +995,14 @@ function blkOpportunity(self,comps,all){
 function blkGeo(self,all){
   const parse=s=>{if(!s)return '—';const m=String(s).match(/\(?\s*([a-z]{2})\s*,\s*([\d.]+)\)?/i);return m?`${m[1].toUpperCase()} · ${fmt(num(m[2]))} traffic`:String(s);};
   const rows=all.map(o=>`<tr><td class="metric${o===self?' self-col':''}">${o.domain}${o===self?' <span class="badge b-self">Bạn</span>':''}</td><td${o===self?' class="self-col"':''}>${parse(o.countries)}</td></tr>`).join('');
-  return `<div class="scroll"><table><thead><tr><th>Website</th><th>Thị trường trọng điểm (Top country)</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="desc" style="margin-top:14px">Giúp xác định nên tối ưu nội dung & backlink theo thị trường nào. Nếu đối thủ tập trung cùng quốc gia với bạn, mức độ cạnh tranh trực tiếp càng cao.</p>`;
+  const cc=s=>{const m=String(s||'').match(/([a-z]{2})/i);return m?m[1].toUpperCase():null;};
+  const selfC=cc(self.countries);
+  const sameMarket=all.filter(o=>o!==self&&cc(o.countries)&&cc(o.countries)===selfC);
+  let cmt='';
+  if(selfC)cmt+=`Thị trường trọng điểm của <b>${self.domain}</b> là <b>${selfC}</b>. `;
+  if(sameMarket.length)cmt+=`<b>${sameMarket.length}</b> đối thủ (${sameMarket.map(o=>o.domain).join(', ')}) cũng tập trung cùng thị trường ${selfC} → cạnh tranh trực tiếp, cần tối ưu nội dung & backlink đúng thị trường này để giành thị phần.`;
+  else cmt+=`Các đối thủ phân tán ở thị trường khác — mức cạnh tranh trực tiếp theo địa lý thấp hơn, có thể tồn tại khoảng trống thị trường để khai thác.`;
+  return `<div class="scroll"><table><thead><tr><th>Website</th><th>Thị trường trọng điểm (Top country)</th></tr></thead><tbody>${rows}</tbody></table></div>${takeaway(cmt)}`;
 }
 function blkQuickwins(a){
   const items=[...a.O,...a.W];
@@ -899,6 +1023,7 @@ function execSummary(self,comps,all,a,tone){
   const totTraffic=all.reduce((s,o)=>s+(o.traffic||0),0)||1;
   const sov=(self.traffic||0)/totTraffic*100;
   const leader=[...all].sort((x,y)=>(y.traffic||0)-(x.traffic||0))[0];
+  const drLeader=[...all].filter(o=>o.dr!=null).sort((x,y)=>(y.dr||0)-(x.dr||0))[0];
   const isLeader=leader===self;
   const ordinal=a.trRank===1?'dẫn đầu':`đứng thứ ${a.trRank}/${a.N}`;
 
@@ -910,38 +1035,56 @@ function execSummary(self,comps,all,a,tone){
    '2':`Có thể khẳng định <b>${self.domain}</b> là một trong những website SEO nổi bật nhất trong nhóm so sánh. `
   };
 
-  let lead=intros[String(tone)]+`Trong nhóm ${a.N} website được phân tích, <b>${self.domain}</b> ${ordinal} về lưu lượng tìm kiếm tự nhiên, nắm khoảng <b>${sov.toFixed(1)}% thị phần hiển thị (share of voice)</b> của tập đối thủ. `;
-  if(self.dr!=null&&a.drAvg!=null) lead+=`Domain Rating ${self.dr} ${self.dr>=a.drAvg?'cao hơn':'thấp hơn'} mặt bằng đối thủ (${a.drAvg.toFixed(0)}), `;
-  if(self.top3Share!=null) lead+=`với ${self.top3Share.toFixed(0)}% từ khóa đang nằm trong Top 3 kết quả. `;
-  if(!isLeader&&leader) lead+=`Đối thủ dẫn đầu hiện tại là <b>${leader.domain}</b> (${fmt(leader.traffic)} traffic/tháng) — đây là chuẩn mực (benchmark) để bám đuổi.`;
-  else lead+=`Đây là vị thế dẫn đầu cần được củng cố trước áp lực cạnh tranh.`;
+  let lead=intros[String(tone)]+`Trong nhóm <b>${a.N}</b> website được phân tích, <b>${self.domain}</b> ${ordinal} về lưu lượng tìm kiếm tự nhiên, nắm khoảng <b>${sov.toFixed(1)}% thị phần hiển thị (share of voice)</b>. `;
+  if(self.dr!=null&&a.drAvg!=null){
+    const gap=self.dr-a.drAvg;
+    lead+=`Domain Rating <b>${self.dr}</b> ${gap>=0?`vượt mặt bằng đối thủ +${gap.toFixed(0)} điểm`:`thấp hơn mặt bằng ${(-gap).toFixed(0)} điểm`} (TB ${a.drAvg.toFixed(0)}), `;
+  }
+  if(self.top3Share!=null) lead+=`với <b>${self.top3Share.toFixed(0)}%</b> từ khóa đang nằm trong Top 3 kết quả. `;
+  if(!isLeader&&leader){
+    lead+=`Đối thủ dẫn đầu traffic hiện tại là <b>${leader.domain}</b> (${fmt(leader.traffic)}/tháng)`;
+    if(drLeader&&drLeader!==self&&drLeader!==leader) lead+=`; mạnh nhất về authority là <b>${drLeader.domain}</b> (DR ${drLeader.dr})`;
+    lead+=`. Đây là benchmark trọng tâm để bám đuổi trong 6–9 tháng tới.`;
+  }else lead+=`Đây là vị thế dẫn đầu cần được củng cố trước áp lực cạnh tranh.`;
 
-  // 3 strategic pillars derived from biggest gaps
+  // 3 pillars derived from biggest gaps (dynamic) — fallback to canonical 3 axes
+  const PILLAR_BANK={
+    refdom:{h:'Tăng tốc Authority & Backlink',p:()=>`Referring domains đang ${fmt(self.refAll||0)} vs TB ${fmt(a.refAvg||0)} — đẩy mạnh digital PR, link báo chí ngành & guest post chất lượng để rút ngắn khoảng cách ~${fmt(Math.max((a.refAvg||0)-(self.refAll||0),0))} ref domains.`},
+    authority:{h:'Củng cố Domain Rating',p:()=>`DR ${self.dr??'—'} đang ${self.dr<a.drAvg?'thấp hơn':'cao hơn'} mặt bằng (TB ${a.drAvg?a.drAvg.toFixed(0):'—'}). Ưu tiên link từ trang DR ≥${Math.max(Math.round((a.drAvg||50)+5),50)}, củng cố topical authority bằng cluster nội dung trụ.`},
+    linkqual:{h:'Thanh lọc & nâng chất hồ sơ Backlink',p:()=>`Tỉ lệ followed chỉ ${self.folShare?self.folShare.toFixed(0)+'%':'—'} — rà soát disavow link spam, tập trung khai thác nguồn followed từ domain có authority thực để sức mạnh được truyền dẫn đúng cách.`},
+    traffic:{h:'Thu hẹp khoảng cách Traffic',p:()=>`Organic traffic ${fmt(self.traffic||0)}/tháng vs TB ${fmt(a.trAvg||0)} — share of voice ${sov.toFixed(1)}%. Cần tăng tốc xuất bản & nâng hạng cụm từ khóa volume cao để dịch chuyển nhanh thị phần.`},
+    content:{h:'Mở rộng kho nội dung theo chủ đề',p:()=>`Đối thủ TB ${fmt(a.kwAvg||0)} từ khóa vs bạn ${fmt(self.okw||0)} — xây pillar/cluster cho các chủ đề trọng tâm, lấp khoảng trống ~${fmt(Math.max((a.kwAvg||0)-(self.okw||0),0))} từ khóa còn thiếu.`},
+    top3:{h:'Nâng hạng từ khóa lên Top 3',p:()=>`Chỉ ${self.top3Share?self.top3Share.toFixed(0):'—'}% từ khóa ở Top 3 — tối ưu on-page (intent, internal link, schema, snippet) đẩy nhóm hạng 4–10 lên Top 3 là đòn bẩy traffic ROI cao nhất ngắn hạn.`}
+  };
+  const used=new Set();
   const pillars=[];
-  // Authority
-  pillars.push({n:'TRỤ CỘT 01',h:'Củng cố Authority',
-    p:self.refAll!=null&&a.refAvg!=null&&self.refAll<a.refAvg
-      ? `Tăng tốc xây dựng referring domains (đang ${fmt(self.refAll)} vs TB ${fmt(a.refAvg)}). Ưu tiên link từ trang DR cao, báo chí ngành & digital PR để nâng Domain Rating bền vững.`
-      : `Duy trì lợi thế ${fmt(self.refAll)} referring domains. Tập trung chất lượng hơn số lượng, thanh lọc link độc & giữ tỉ lệ followed ${self.folShare?self.folShare.toFixed(0)+'%':'cao'}.`});
-  // Content / keywords
-  pillars.push({n:'TRỤ CỘT 02',h:'Mở rộng & nâng hạng nội dung',
-    p:self.top3Share!=null&&self.top3Share<35
-      ? `Chỉ ${self.top3Share.toFixed(0)}% từ khóa ở Top 3 — xây topic cluster, tối ưu on-page & internal link để đẩy nhóm từ khóa trang 1 lên Top 3, nơi tập trung phần lớn lượt click.`
-      : `Nền tảng nội dung mạnh (${self.top3Share?self.top3Share.toFixed(0):''}% từ khóa Top 3). Khai thác sâu các cụm chủ đề mới để mở rộng độ phủ từ khóa và bảo vệ thị phần.`});
-  // Channel mix
-  pillars.push({n:'TRỤ CỘT 03',h:'Đa dạng hóa kênh',
-    p:(!self.ptraffic||self.ptraffic===0)
-      ? `Chưa khai thác Paid Search trong khi một số đối thủ đã phủ kênh trả phí. Thử nghiệm Google Ads cho nhóm từ khóa thương mại giá trị cao để tăng độ phủ SERP ngắn hạn.`
-      : `Đang vận hành song song Organic & Paid. Tối ưu phân bổ ngân sách paid vào từ khóa chuyển đổi cao, để organic gánh nhóm từ khóa thông tin.`});
+  a.gaps.forEach(g=>{if(pillars.length<3&&PILLAR_BANK[g.k]&&!used.has(g.k)){used.add(g.k);pillars.push({h:PILLAR_BANK[g.k].h,p:PILLAR_BANK[g.k].p()});}});
+  // Fallback: ensure 3 pillars always
+  if(pillars.length<3){
+    const fb=[
+      {h:'Củng cố Authority',p:self.refAll!=null&&a.refAvg!=null&&self.refAll<a.refAvg
+        ? `Tăng tốc xây dựng referring domains (đang ${fmt(self.refAll)} vs TB ${fmt(a.refAvg)}). Ưu tiên link DR cao, digital PR & báo chí ngành để nâng DR bền vững.`
+        : `Duy trì lợi thế ${fmt(self.refAll||0)} ref domains. Tập trung chất lượng hơn số lượng, thanh lọc link độc & giữ tỉ lệ followed cao.`},
+      {h:'Mở rộng & nâng hạng nội dung',p:self.top3Share!=null&&self.top3Share<35
+        ? `Chỉ ${self.top3Share.toFixed(0)}% từ khóa ở Top 3 — xây topic cluster & tối ưu on-page để đẩy nhóm trang 1 lên Top 3, nơi tập trung phần lớn click.`
+        : `Nền tảng nội dung ${self.top3Share?'mạnh ('+self.top3Share.toFixed(0)+'% từ khóa Top 3)':'ổn'} — khai thác sâu các cụm chủ đề mới để mở rộng độ phủ & bảo vệ thị phần.`},
+      {h:'Đa dạng hóa kênh & chuyển đổi',p:(!self.ptraffic||self.ptraffic===0)
+        ? `Chưa khai thác Paid Search trong khi một phần đối thủ đã phủ kênh trả phí. Thử nghiệm Google Ads cho từ khóa thương mại giá trị cao để tăng độ phủ SERP ngắn hạn.`
+        : `Đang vận hành song song Organic & Paid. Tối ưu phân bổ ngân sách paid vào từ khóa chuyển đổi cao, để organic gánh nhóm từ khóa thông tin.`}
+    ];
+    fb.forEach(f=>{if(pillars.length<3&&!pillars.some(p=>p.h===f.h)) pillars.push(f);});
+  }
+  pillars.forEach((p,i)=>{p.n=`TRỤ CỘT 0${i+1}`;});
 
+  const horizon=a.gaps.length>=2?'6–9 tháng tới':'3–6 tháng tới';
   const verdicts={
-   '-2':`<b>Kết luận:</b> Nếu không hành động quyết liệt về authority và nội dung, ${self.domain} sẽ tiếp tục tụt lại so với đối thủ. Đây là thời điểm cần một chiến lược SEO bài bản và mức đầu tư nghiêm túc để xoay chuyển tình thế.`,
-   '-1':`<b>Kết luận:</b> ${self.domain} đã có nền tảng nhưng đang bộc lộ nhiều khoảng trống so với đối thủ. Cần ưu tiên khắc phục điểm yếu theo lộ trình 3 trụ cột trên trong 6–9 tháng tới.`,
+   '-2':`<b>Kết luận:</b> Nếu không hành động quyết liệt theo lộ trình ${pillars.length} trụ cột trên, <b>${self.domain}</b> sẽ tiếp tục tụt lại so với đối thủ. Đây là thời điểm cần chiến lược SEO bài bản và mức đầu tư nghiêm túc để xoay chuyển tình thế trong ${horizon}.`,
+   '-1':`<b>Kết luận:</b> <b>${self.domain}</b> đã có nền tảng nhưng đang bộc lộ nhiều khoảng trống so với đối thủ. Cần ưu tiên khắc phục điểm yếu theo lộ trình ${pillars.length} trụ cột trên trong ${horizon}.`,
    '0':isLeader
-      ? `<b>Kết luận:</b> ${self.domain} đang ở thế dẫn đầu về hiển thị tự nhiên. Ưu tiên chiến lược là <b>phòng thủ thị phần</b> — củng cố authority và mở rộng nội dung trước khi đối thủ thu hẹp khoảng cách.`
-      : `<b>Kết luận:</b> ${self.domain} có nền tảng cạnh tranh tốt nhưng còn dư địa rõ rệt so với nhóm dẫn đầu. Lộ trình 3 trụ cột trên giúp <b>thu hẹp khoảng cách traffic và authority</b> trong 6–9 tháng tới.`,
-   '1':`<b>Kết luận:</b> ${self.domain} đang giữ vị thế cạnh tranh tốt. Phát huy các thế mạnh hiện có và khai thác cơ hội ở 3 trụ cột trên sẽ giúp <b>mở rộng khoảng cách</b> với đối thủ.`,
-   '2':`<b>Kết luận:</b> ${self.domain} đang dẫn dắt cuộc chơi SEO trong nhóm. Chiến lược trọng tâm là <b>củng cố ngôi đầu</b> và biến lợi thế hiện tại thành rào cản cạnh tranh dài hạn.`
+      ? `<b>Kết luận:</b> <b>${self.domain}</b> đang ở thế dẫn đầu về hiển thị tự nhiên (SOV ${sov.toFixed(1)}%). Ưu tiên chiến lược là <b>phòng thủ thị phần</b> — củng cố authority và mở rộng nội dung trước khi đối thủ thu hẹp khoảng cách.`
+      : `<b>Kết luận:</b> <b>${self.domain}</b> có nền tảng cạnh tranh tốt nhưng còn dư địa rõ rệt so với nhóm dẫn đầu. Lộ trình ${pillars.length} trụ cột trên giúp <b>thu hẹp khoảng cách traffic và authority</b> trong ${horizon}.`,
+   '1':`<b>Kết luận:</b> <b>${self.domain}</b> đang giữ vị thế cạnh tranh tốt (SOV ${sov.toFixed(1)}%). Phát huy các thế mạnh hiện có và khai thác cơ hội ở ${pillars.length} trụ cột trên sẽ giúp <b>mở rộng khoảng cách</b> với đối thủ trong ${horizon}.`,
+   '2':`<b>Kết luận:</b> <b>${self.domain}</b> đang dẫn dắt cuộc chơi SEO trong nhóm (SOV ${sov.toFixed(1)}%). Chiến lược trọng tâm là <b>củng cố ngôi đầu</b> và biến lợi thế hiện tại thành rào cản cạnh tranh dài hạn.`
   };
   const orders={'-2':['w','t','s','o'],'-1':['w','t','s','o'],'0':['s','w','o','t'],'1':['s','o','w','t'],'2':['s','o','w','t']};
 
@@ -1006,22 +1149,37 @@ function renderReport(ai){
   sovSegs.forEach(s=>s.pct=Math.round(s.value/totTr*100));
   const selfSov=Math.round((self.traffic||0)/totTr*100);
 
+  // ---- nhận xét rule-based cho các mục biểu đồ ----
+  const ovCmt=`<b>${self.domain}</b> đang đứng <b>#${a.trRank||'—'}/${a.N}</b> về organic traffic. `+
+    (self.dr!=null&&a.drAvg!=null?`Domain Rating ${self.dr} ${self.dr>=a.drAvg?'cao hơn':'thấp hơn'} trung bình đối thủ (${a.drAvg.toFixed(0)}); `:'')+
+    (self.refAll!=null&&a.refAvg!=null?`referring domains ${fmt(self.refAll)} ${self.refAll>=a.refAvg?'trên':'dưới'} mức trung bình (${fmt(a.refAvg)}). `:'')+
+    (a.trRank===1?`Bạn đang dẫn đầu nhóm — ưu tiên phòng thủ và mở rộng thị phần.`:`Còn dư địa rõ rệt để thu hẹp khoảng cách với nhóm dẫn đầu.`);
+  const sovLeader=[...sovSegs].sort((x,y)=>y.value-x.value)[0];
+  const chartsCmt=`Về <b>thị phần hiển thị (Share of Voice)</b>, `+
+    (sovLeader.label===self.domain?`<b>${self.domain}</b> đang dẫn đầu với <b>${selfSov}%</b> tổng organic traffic của nhóm. `:`<b>${sovLeader.label}</b> dẫn đầu (${sovLeader.pct}%), còn <b>${self.domain}</b> nắm <b>${selfSov}%</b>. `)+
+    `Ở các biểu đồ cột, cột màu chính là bạn — càng dài càng tốt. `+
+    (selfSov<25?`Thị phần còn khiêm tốn: tập trung tăng traffic ở những nhóm từ khóa đối thủ đang thắng.`:`Thị phần ở mức cạnh tranh tốt — giữ đà và bảo vệ các từ khóa chủ lực.`);
+  let selfBest=0,totMetrics=0;
+  metricDefs.forEach(([label,key,low])=>{const vals=all.map(o=>o[key]).filter(x=>x!=null);if(!vals.length)return;totMetrics++;const best=low?Math.min(...vals):Math.max(...vals);if(self[key]!=null&&self[key]===best)selfBest++;});
+  const tableCmt=`<b>${self.domain}</b> đang dẫn đầu (đạt <span class="badge b-best">#1</span>) ở <b>${selfBest}/${totMetrics}</b> chỉ số so sánh. `+
+    (selfBest>=totMetrics/2?`Vị thế cạnh tranh mạnh trên phần lớn phương diện.`:`Các chỉ số còn lại là khoảng trống cần cải thiện để bắt kịp đối thủ dẫn đầu từng hạng mục.`);
+
   // keyword distribution stacked bar (self)
   const kd=[['Top 3','kTop3'],['4–10','k410'],['11–20','k1120'],['21–50','k2150'],['51+','k51']];
-  const kdColors=['#5b46f5','#7b6af7','#22d39a','#f59e0b','#ef4444'].map((c,i)=> i===0?PALETTE[0]:[PALETTE[0],PALETTE[1]||'#22d39a',PALETTE[2]||'#f59e0b',PALETTE[3]||'#ef4444','#c7cad6'][i]||c );
-  const kdSegs=kd.map(([lbl,k],i)=>({label:lbl,value:self[k]||0,color:[PALETTE[0],'#8a7bf8',PALETTE[1]||'#22d39a',PALETTE[2]||'#f59e0b',PALETTE[3]||'#ef4444'][i]}));
+  const kdColors=[PALETTE[0],PALETTE[1]||'#00ffaa',PALETTE[2]||'#ffce04',PALETTE[3]||'#15cfff','#c7cad6'];
+  const kdSegs=kd.map(([lbl,k],i)=>({label:lbl,value:self[k]||0,color:kdColors[i]}));
   const kdTot=kdSegs.reduce((s,x)=>s+x.value,0)||1;
   const kdBar=kdSegs.map(s=>`<i style="width:${s.value/kdTot*100}%;background:${s.color}" title="${s.label}: ${fmt(s.value)}"></i>`).join('');
 
   /* ---- SWOT ---- */
   const swotList=arr=>arr.length?arr.map(x=>`<li>${x}</li>`).join(''):'<li style="color:var(--muted)">Không có mục nổi bật.</li>';
   const quadDefs={
-    s:{cls:'q-s',title:'💪 Strengths — Điểm mạnh',data:a.S},
-    w:{cls:'q-w',title:'⚠️ Weaknesses — Điểm yếu',data:a.W},
-    o:{cls:'q-o',title:'🚀 Opportunities — Cơ hội',data:a.O},
-    t:{cls:'q-t',title:'🛡️ Threats — Thách thức',data:a.T}
+    s:{pidx:0,title:'Strengths — Điểm mạnh',data:a.S},
+    w:{pidx:1,title:'Weaknesses — Điểm yếu',data:a.W},
+    o:{pidx:2,title:'Opportunities — Cơ hội',data:a.O},
+    t:{pidx:3,title:'Threats — Thách thức',data:a.T}
   };
-  const swotHTML=ex.swotOrder.map(k=>{const q=quadDefs[k];return `<div class="quad ${q.cls}"><h4>${q.title}</h4><ul>${swotList(q.data)}</ul></div>`;}).join('');
+  const swotHTML=ex.swotOrder.map(k=>{const q=quadDefs[k];const c=PALETTE[q.pidx]||PALETTE[0];return `<div class="quad" style="--quad-c:${c}"><h4>${q.title}</h4><ul>${swotList(q.data)}</ul></div>`;}).join('');
 
   /* ---- build section blocks ---- */
   const secWrap=(key,title,desc,inner,extra='')=>`
@@ -1039,7 +1197,7 @@ function renderReport(ai){
         ${stat('Organic Traffic','traffic','trAvg',false)}
         ${stat('Referring Domains','refAll','refAvg',false)}
         <div class="stat"><div class="k">Hạng Organic Traffic</div><div class="v">#${a.trRank||'—'}<span style="font-size:15px;color:var(--muted)">/${a.N}</span></div><div class="d">trong nhóm so sánh</div></div>
-      </div>`),
+      </div>${takeaway(ovCmt)}`),
     charts:secWrap('charts','Biểu đồ trực quan','Cột màu chính là website của bạn.',
       `<div class="chartwrap">
         <div class="chartbox"><h4>Share of Voice — Thị phần Organic Traffic</h4>
@@ -1047,8 +1205,8 @@ function renderReport(ai){
         <div class="chartbox"><h4>Organic Traffic / tháng</h4>${hBars(trItems,fmt)}</div>
         <div class="chartbox"><h4>Domain Rating</h4>${hBars(drItems,fmt)}</div>
         <div class="chartbox"><h4>Referring Domains</h4>${hBars(refItems,fmt)}</div>
-      </div>`),
-    kwdist:secWrap('kwdist','Phân bổ thứ hạng từ khóa','Bạn đang mạnh ở "trang mấy" của Google.',blkKwdist(self)),
+      </div>${takeaway(chartsCmt)}`),
+    kwdist:secWrap('kwdist','Phân bổ thứ hạng từ khóa','Bạn đang mạnh ở "trang mấy" của Google.',blkKwdist(self,comps,all)),
     backlink:secWrap('backlink','Hồ sơ Backlink chuyên sâu','Chất lượng & độ đa dạng của hồ sơ liên kết.',blkBacklink(self,comps,all)),
     channel:secWrap('channel','Cơ cấu kênh: Organic vs Paid','Mức độ phụ thuộc quảng cáo trả phí.',blkChannel(self,comps,all)),
     matrix:secWrap('matrix','Ma trận định vị cạnh tranh','',blkMatrix(self,all)),
@@ -1056,7 +1214,7 @@ function renderReport(ai){
     geo:secWrap('geo','Tập trung địa lý','Thị trường trọng điểm theo lưu lượng.',blkGeo(self,all)),
     quickwins:secWrap('quickwins','Quick Wins — Việc nên làm trước','Ưu tiên theo mức tác động.',blkQuickwins(a)),
     table:secWrap('table','Bảng so sánh chi tiết','Ô <span class="badge b-best">#1</span> = dẫn đầu chỉ số đó. Cột tô đậm là website của bạn.',
-      `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`),
+      `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>${takeaway(tableCmt)}`),
     swot:secWrap('swot','Phân tích SWOT',`Tự động suy luận từ chỉ số SEO của ${self.domain} trong tương quan đối thủ.`,
       `<div class="swot">${swotHTML}</div>`),
     exec:secWrap('exec','Tổng kết &amp; Đề xuất chiến lược','',
@@ -1177,14 +1335,34 @@ async function saveReport(){
   if($('#savedPanel').classList.contains('show'))loadSaved();
 }
 function toggleSaved(){const p=$('#savedPanel');p.classList.toggle('show');if(p.classList.contains('show'))loadSaved();}
+let SAVED_CACHE=[];
+function escAttr(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderSavedRows(rows){
+  const list=$('#savedList');
+  const cntEl=$('#savedCount');
+  if(cntEl) cntEl.textContent=SAVED_CACHE.length?`(${rows.length}/${SAVED_CACHE.length})`:'';
+  if(!rows.length){
+    list.classList.remove('scroll-on');
+    list.innerHTML=`<div class="savedempty">${SAVED_CACHE.length?'Không tìm thấy báo cáo phù hợp.':'Chưa có báo cáo nào.'}</div>`;
+    return;
+  }
+  list.classList.toggle('scroll-on',rows.length>5);
+  list.innerHTML=rows.map(r=>`<div class="savedrow"><div class="info"><b>${escAttr(r.project_name)}</b><br><span>${escAttr(r.self_domain)} · ${new Date(r.created_at).toLocaleString('vi-VN')}</span></div>
+    <div class="rbtns"><button class="open" onclick="openReport('${r.id}')">Mở</button><button class="del" onclick="deleteReport('${r.id}')">Xóa</button></div></div>`).join('');
+}
+function filterSaved(){
+  const q=((($('#savedSearch')||{}).value)||'').trim().toLowerCase();
+  if(!q) return renderSavedRows(SAVED_CACHE);
+  renderSavedRows(SAVED_CACHE.filter(r=>(r.project_name||'').toLowerCase().includes(q)||(r.self_domain||'').toLowerCase().includes(q)));
+}
 async function loadSaved(){
   if(!SB||!USER)return;
   const list=$('#savedList');list.innerHTML='<p style="color:var(--muted);font-size:13px">Đang tải…</p>';
   const {data,error}=await SB.from('reports').select('id,project_name,self_domain,created_at').order('created_at',{ascending:false});
   if(error){list.innerHTML='<p style="color:#b91c1c;font-size:13px">Lỗi tải: '+error.message+'</p>';return;}
-  if(!data.length){list.innerHTML='<p style="color:var(--muted);font-size:13px">Chưa có báo cáo nào.</p>';return;}
-  list.innerHTML=data.map(r=>`<div class="savedrow"><div class="info"><b>${r.project_name}</b><br><span>${r.self_domain} · ${new Date(r.created_at).toLocaleString('vi-VN')}</span></div>
-    <div class="rbtns"><button class="open" onclick="openReport('${r.id}')">Mở</button><button class="del" onclick="deleteReport('${r.id}')">Xóa</button></div></div>`).join('');
+  SAVED_CACHE=data||[];
+  const s=$('#savedSearch'); if(s) s.value='';
+  renderSavedRows(SAVED_CACHE);
 }
 async function openReport(id){
   const {data,error}=await SB.from('reports').select('html').eq('id',id).single();
