@@ -78,7 +78,8 @@
   th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.3px}
   thead th.self-col{color:#fff;background:var(--primary);border-radius:8px 8px 0 0}
   td.metric{font-weight:600;white-space:normal}
-  .self-col{background:color-mix(in srgb,var(--primary) 9%,#fff)}
+  .self-col{background:#004aed;color:#fff}
+  .self-col .badge{color:#fff;background:rgba(255,255,255,.22)}
   .badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
   .b-best{background:color-mix(in srgb,var(--sec1) 20%,#fff);color:color-mix(in srgb,var(--sec1) 60%,#000)}
   .b-self{background:rgba(255,255,255,.25);color:#fff}
@@ -1004,7 +1005,7 @@ function blkBacklink(self,comps,all){
   if(blLeader&&blLeader!==self)cmt+=`<b>${blLeader.domain}</b> dẫn đầu độ phủ backlink (${fmt(blLeader.refAll)} ref domains) — authority mạnh, cần theo dõi và rút ngắn khoảng cách bằng digital PR & link báo chí.`;
   else if(blLeader===self)cmt+=`Bạn đang dẫn đầu nhóm về độ phủ backlink — hãy giữ chất lượng và thanh lọc link độc để duy trì lợi thế.`;
   return `<p class="desc" style="margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Referring Domains</p>`+miniTable(defs1,self,comps,all)
-    +`<p class="desc" style="margin-top:18px;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Backlinks & Đa dạng IP</p>`+miniTable(defs2,self,comps,all)
+    +`<p class="desc" style="margin-top:18px;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Backlinks &amp; Đa dạng IP <button type="button" class="btn ghost" style="font-size:11px;padding:2px 10px;margin-left:8px" onclick="var w=this.closest('p').nextElementSibling;var v=w.style.display==='none';w.style.display=v?'':'none';this.textContent=v?'▲ Ẩn':'▼ Hiện'"">▲ Ẩn</button></p>`+miniTable(defs2,self,comps,all)
     +takeaway(cmt);
 }
 function blkChannel(self,comps,all){
