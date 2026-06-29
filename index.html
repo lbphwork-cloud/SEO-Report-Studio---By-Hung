@@ -181,6 +181,28 @@
   .savedactions .btn-del-sel:hover{opacity:.85}
   .savedactions .btn-del-sel.show{display:inline-block}
   .savedrow input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex:none;margin-right:4px}
+
+  /* Admin panel */
+  .admin-panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+  .admin-panel.show{display:block}
+  .admin-panel h3{font-size:16px;font-weight:700;margin-bottom:14px;color:var(--primary)}
+  .admin-tabs{display:flex;gap:8px;margin-bottom:14px}
+  .admin-tabs button{font-family:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;transition:.15s}
+  .admin-tabs button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .admin-table{width:100%;border-collapse:collapse;font-size:13px}
+  .admin-table th{background:#f3f5fb;font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line)}
+  .admin-table td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .admin-table tr:hover td{background:#f8f9fd}
+  .admin-table .email{font-weight:600;color:var(--primary);max-width:200px;overflow:hidden;text-overflow:ellipsis}
+  .admin-table .cnt{font-weight:700;color:var(--ink)}
+  .admin-table .btn-sm{font-family:inherit;font-size:11.5px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 10px;cursor:pointer}
+  .admin-table .btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+  .admin-table .btn-sm.danger{color:#ef4444;border-color:#fdd}
+  .admin-table .btn-sm.danger:hover{background:#fef2f2;border-color:#ef4444}
+  .admin-scroll{max-height:400px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
+  .admin-scroll::-webkit-scrollbar{width:6px}
+  .admin-scroll::-webkit-scrollbar-thumb{background:#cfd3df;border-radius:3px}
+  .acctbar .btn-admin{background:#1a1a2e;color:#f5c842}
   .savedrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px}
   .savedrow .info{font-size:13.5px}
   .savedrow .info b{font-weight:600}
@@ -317,9 +339,20 @@
   <div class="acctbar" id="acctbar">
     <div class="who">👤 <b id="acctEmail"></b></div>
     <div class="acts">
+      <button class="btn-admin" id="btnAdmin" style="display:none" onclick="toggleAdmin()">⚙️ Admin</button>
       <button class="btn-saved" onclick="toggleSaved()">📂 Báo cáo đã lưu</button>
       <button class="btn-logout" onclick="authLogout()">Đăng xuất</button>
     </div>
+  </div>
+
+  <!-- admin panel (chỉ admin thấy) -->
+  <div class="admin-panel" id="adminPanel">
+    <h3>⚙️ Quản trị hệ thống</h3>
+    <div class="admin-tabs">
+      <button class="on" id="tabUsers" onclick="adminTab('users')">👤 Tài khoản</button>
+      <button id="tabReports" onclick="adminTab('reports')">📄 Tất cả báo cáo</button>
+    </div>
+    <div id="adminContent"><p style="color:var(--muted);font-size:13px">Đang tải…</p></div>
   </div>
 
   <!-- saved reports drawer -->
@@ -1318,13 +1351,6 @@ function initAuth(){
   SB.auth.getSession().then(({data})=>setUser(data.session?data.session.user:null));
   SB.auth.onAuthStateChange((_e,s)=>setUser(s?s.user:null));
 }
-function setUser(u){
-  USER=u;
-  const aw=$('#authwrap'),ab=$('#acctbar');
-  if(u){aw.classList.remove('show');ab.classList.add('show');$('#acctEmail').textContent=u.email;}
-  else {aw.classList.add('show');ab.classList.remove('show');$('#savedPanel').classList.remove('show');}
-  const sb=$('#savebar');if(sb)sb.style.display=u?'inline-flex':'none';
-}
 function authTab(m){AUTH_MODE=m;$('#tabLogin').classList.toggle('on',m==='login');$('#tabReg').classList.toggle('on',m==='register');$('#authBtn').textContent=m==='login'?'Đăng nhập':'Đăng ký';$('#authErr').textContent='';}
 async function authSubmit(){
   if(!SB){$('#authErr').textContent='Chưa cấu hình Supabase (config.js).';return;}
@@ -1415,6 +1441,81 @@ async function deleteReport(id){
   const {error}=await SB.from('reports').delete().eq('id',id);
   if(error){alert('Lỗi: '+error.message);return;}
   loadSaved();
+}
+/* ================= ADMIN PANEL ================= */
+const ADMIN_EMAIL='lbph.work@gmail.com';
+let ADMIN_TAB='users';
+function setUser(u){
+  USER=u;
+  const aw=$('#authwrap'),ab=$('#acctbar');
+  if(u){aw.classList.remove('show');ab.classList.add('show');$('#acctEmail').textContent=u.email;
+    const ba=$('#btnAdmin');if(ba) ba.style.display=(u.email===ADMIN_EMAIL)?'inline-block':'none';
+  }else{aw.classList.add('show');ab.classList.remove('show');$('#savedPanel').classList.remove('show');$('#adminPanel').classList.remove('show');
+    const ba=$('#btnAdmin');if(ba) ba.style.display='none';}
+  const sb=$('#savebar');if(sb)sb.style.display=u?'inline-flex':'none';
+}
+function toggleAdmin(){
+  const p=$('#adminPanel');p.classList.toggle('show');
+  if(p.classList.contains('show')) loadAdminTab();
+}
+function adminTab(tab){
+  ADMIN_TAB=tab;
+  $('#tabUsers').classList.toggle('on',tab==='users');
+  $('#tabReports').classList.toggle('on',tab==='reports');
+  loadAdminTab();
+}
+async function loadAdminTab(){
+  const c=$('#adminContent');
+  c.innerHTML='<p style="color:var(--muted);font-size:13px">Đang tải…</p>';
+  if(ADMIN_TAB==='users') await loadAdminUsers();
+  else await loadAdminReports();
+}
+async function loadAdminUsers(){
+  const c=$('#adminContent');
+  const {data,error}=await SB.rpc('get_admin_users');
+  if(error){c.innerHTML=`<p style="color:#b91c1c;font-size:13px">Lỗi: ${error.message}. <br><small>Hãy chạy SQL admin trong Supabase (xem supabase-setup.sql).</small></p>`;return;}
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--muted)">Chưa có tài khoản nào.</p>';return;}
+  const rows=data.map(u=>`<tr>
+    <td class="email" title="${escAttr(u.email)}">${escAttr(u.email)}</td>
+    <td class="cnt">${u.report_count}</td>
+    <td>${new Date(u.registered_at).toLocaleDateString('vi-VN')}</td>
+    <td>${u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleString('vi-VN'):'—'}</td>
+    <td>${u.report_count>0?`<button class="btn-sm" onclick="adminViewReports('${u.id}','${escAttr(u.email)}')">Xem reports</button>`:''}</td>
+  </tr>`).join('');
+  c.innerHTML=`<div class="admin-scroll"><table class="admin-table">
+    <thead><tr><th>Email</th><th>Reports</th><th>Đăng ký</th><th>Đăng nhập gần nhất</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">Tổng: <b>${data.length}</b> tài khoản · <b>${data.reduce((s,u)=>s+Number(u.report_count),0)}</b> báo cáo</p>`;
+}
+async function loadAdminReports(userId,email){
+  const c=$('#adminContent');
+  const {data,error}=await SB.rpc('get_admin_reports',{p_user_id:userId||null});
+  if(error){c.innerHTML=`<p style="color:#b91c1c;font-size:13px">Lỗi: ${error.message}</p>`;return;}
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--muted)">Chưa có báo cáo nào.</p>';return;}
+  const title=email?`Báo cáo của <b>${escAttr(email)}</b>`:`Tất cả báo cáo (${data.length})`;
+  const back=email?`<button class="btn-sm" onclick="adminTab('users')" style="margin-bottom:10px">← Quay lại danh sách user</button>`:'';
+  const rows=data.map(r=>`<tr>
+    <td class="email" title="${escAttr(r.user_email)}">${escAttr(r.user_email)}</td>
+    <td><b>${escAttr(r.project_name)}</b></td>
+    <td>${escAttr(r.self_domain||'—')}</td>
+    <td>${new Date(r.created_at).toLocaleString('vi-VN')}</td>
+    <td><button class="btn-sm" onclick="openReport('${r.id}')">Mở</button> <button class="btn-sm danger" onclick="adminDeleteReport('${r.id}')">Xoá</button></td>
+  </tr>`).join('');
+  c.innerHTML=`${back}<p style="font-size:13px;margin-bottom:10px">${title}</p>
+    <div class="admin-scroll"><table class="admin-table">
+    <thead><tr><th>User</th><th>Project</th><th>Domain</th><th>Ngày tạo</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+function adminViewReports(userId,email){
+  ADMIN_TAB='reports';
+  $('#tabUsers').classList.remove('on');$('#tabReports').classList.add('on');
+  loadAdminReports(userId,email);
+}
+async function adminDeleteReport(id){
+  if(!confirm('Xoá báo cáo này (admin)?'))return;
+  const {error}=await SB.from('reports').delete().eq('id',id);
+  if(error){alert('Lỗi: '+error.message);return;}
+  loadAdminTab();
 }
 initAuth();
 </script>
