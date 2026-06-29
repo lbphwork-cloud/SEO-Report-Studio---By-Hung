@@ -950,35 +950,36 @@ function miniTable(defs,self,comps,all){
 
 /* scatter (DR × Traffic) */
 function scatter(self,all){
-  const xmax=Math.max(...all.map(o=>o.dr||0),10)*1.1, ymax=Math.max(...all.map(o=>o.traffic||0),10)*1.14;
-  const W=620,H=380,L=58,B=46,T=22,R=22;
+  const xmax=Math.max(...all.map(o=>o.dr||0),10)*1.12, ymax=Math.max(...all.map(o=>o.traffic||0),10)*1.18;
+  const W=780,H=Math.max(420,all.length*28+80),L=80,B=50,T=30,R=30;
   const px=v=>L+v/xmax*(W-L-R), py=v=>H-B-v/ymax*(H-B-T);
   let g='';
   for(let i=0;i<=4;i++){const gy=H-B-i/4*(H-B-T),gx=L+i/4*(W-L-R);
     g+=`<line class="grid-l" x1="${L}" y1="${gy.toFixed(1)}" x2="${W-R}" y2="${gy.toFixed(1)}"/>`;
-    g+=`<text class="axl" x="${L-8}" y="${(gy+4).toFixed(1)}" text-anchor="end">${fmt(Math.round(ymax*i/4))}</text>`;
-    g+=`<text class="axl" x="${gx.toFixed(1)}" y="${H-B+18}" text-anchor="middle">${Math.round(xmax*i/4)}</text>`;}
-  const labels=all.map(o=>{const isS=o===self,cx=px(o.dr||0),cy=py(o.traffic||0),r=isS?12:9;
-    return {o,isS,cx,cy,r,lx:cx,ly:cy-r-6,w:o.domain.slice(0,18).length*6.5+8,h:14};});
-  labels.sort((a,b)=>(a.isS?-1:b.isS?1:a.ly-b.ly));
-  function overlap(a,b){return Math.abs(a.lx-b.lx)<(a.w+b.w)/2+2&&Math.abs(a.ly-b.ly)<a.h+1;}
-  for(let pass=0;pass<20;pass++){let moved=false;for(let i=0;i<labels.length;i++){for(let j=i+1;j<labels.length;j++){
-    const a=labels[i],b=labels[j];if(!overlap(a,b))continue;moved=true;
-    const dy=(a.h+2-Math.abs(a.ly-b.ly))/2;
-    if(!a.isS)a.ly-=dy*0.5;b.ly+=dy*0.5;
-    if(overlap(a,b)){const dx=((a.w+b.w)/2+6-Math.abs(a.lx-b.lx))/2;
-      if(a.lx<=b.lx){if(!a.isS)a.lx-=dx;b.lx+=dx;}else{if(!a.isS)a.lx+=dx;b.lx-=dx;}}
-  }}if(!moved)break;}
-  labels.forEach(l=>{l.lx=Math.max(L+l.w/2,Math.min(W-R-l.w/2,l.lx));l.ly=Math.max(T+6,Math.min(H-B-4,l.ly));});
+    g+=`<text class="axl" x="${L-10}" y="${(gy+4).toFixed(1)}" text-anchor="end">${fmt(Math.round(ymax*i/4))}</text>`;
+    g+=`<text class="axl" x="${gx.toFixed(1)}" y="${H-B+20}" text-anchor="middle">${Math.round(xmax*i/4)}</text>`;}
+  const FS=10.5,LH=14;
+  const labels=all.map(o=>{const isS=o===self,cx=px(o.dr||0),cy=py(o.traffic||0),r=isS?11:8,dn=o.domain.length>20?o.domain.slice(0,18)+'…':o.domain;
+    return {o,isS,cx,cy,r,lx:cx,ly:cy-r-7,dn,w:dn.length*FS*0.58+10,h:LH};});
+  labels.sort((a,b)=>a.isS?-1:b.isS?1:a.cx-b.cx);
+  for(let pass=0;pass<40;pass++){let any=false;for(let i=0;i<labels.length;i++){for(let j=i+1;j<labels.length;j++){
+    const a=labels[i],b=labels[j],
+      ox=(a.w+b.w)/2+4-Math.abs(a.lx-b.lx), oy=a.h+2-Math.abs(a.ly-b.ly);
+    if(ox<=0||oy<=0)continue;any=true;
+    if(oy<ox){const d=oy/2+1;if(a.ly<b.ly){if(!a.isS)a.ly-=d;if(!b.isS)b.ly+=d;else a.ly-=d*2;}
+      else{if(!a.isS)a.ly+=d;if(!b.isS)b.ly-=d;else a.ly+=d*2;}}
+    else{const d=ox/2+1;if(a.lx<b.lx){if(!a.isS)a.lx-=d;if(!b.isS)b.lx+=d;else a.lx-=d*2;}
+      else{if(!a.isS)a.lx+=d;if(!b.isS)b.lx-=d;else a.lx+=d*2;}}
+  }}if(!any)break;}
+  labels.forEach(l=>{l.lx=Math.max(L+l.w/2,Math.min(W-R-l.w/2,l.lx));l.ly=Math.max(T+4,Math.min(H-B-6,l.ly));});
   const pts=labels.map(l=>{const col=l.isS?PALETTE[0]:compColor(all.filter(x=>x!==self).indexOf(l.o));
     const dist=Math.hypot(l.lx-l.cx,l.ly-l.cy);
-    const line=dist>16?`<line x1="${l.cx.toFixed(1)}" y1="${l.cy.toFixed(1)}" x2="${l.lx.toFixed(1)}" y2="${(l.ly+4).toFixed(1)}" stroke="${col}" stroke-width=".7" opacity=".5"/>`:'';
-    return `<circle cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r}" fill="${col}" opacity="${l.isS?.95:.7}" stroke="#fff" stroke-width="2"/>${line}
-      <text x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="middle" font-size="11" font-weight="${l.isS?700:500}" fill="var(--ink)">${l.o.domain.slice(0,18)}</text>`;}).join('');
+    const line=dist>18?`<line x1="${l.cx.toFixed(1)}" y1="${l.cy.toFixed(1)}" x2="${l.lx.toFixed(1)}" y2="${(l.ly+4).toFixed(1)}" stroke="${col}" stroke-width=".8" opacity=".45" stroke-dasharray="3,2"/>`:'';
+    return `<circle cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r}" fill="${col}" opacity="${l.isS?.95:.7}" stroke="#fff" stroke-width="2"/>${line}<text x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="middle" font-size="${FS}" font-weight="${l.isS?700:500}" fill="var(--ink)">${l.dn}</text>`;}).join('');
   return `<svg class="scatter" viewBox="0 0 ${W} ${H}">${g}
     <line class="grid-l" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"/>
-    <text class="axl" x="${W/2}" y="${H-6}" text-anchor="middle" font-weight="600">Domain Rating →</text>
-    <text class="axl" x="14" y="${(H-B)/2}" text-anchor="middle" font-weight="600" transform="rotate(-90 14 ${(H-B)/2})">Organic Traffic →</text>
+    <text class="axl" x="${W/2}" y="${H-8}" text-anchor="middle" font-weight="600">Domain Rating →</text>
+    <text class="axl" x="18" y="${(H-B+T)/2}" text-anchor="middle" font-weight="600" transform="rotate(-90 18 ${(H-B+T)/2})">Organic Traffic →</text>
     ${pts}</svg>`;
 }
 
