@@ -993,9 +993,8 @@ function blkKwdist(self,comps,all){
   return `<div class="stackbar">${bar}</div><div class="stk-lbl"><span style="color:var(--muted);font-weight:500">Tổng ${fmt(tot)} từ khóa của ${self.domain}</span></div>${legend(segs.map(s=>({label:s.label,color:s.color,pct:Math.round(s.value/tot*100)})))}${takeaway(cmt)}`;
 }
 function blkBacklink(self,comps,all){
-  const defs=[['Referring domains','refAll',false,'n'],['— Followed','refFol',false,'n'],['— Not followed','refNo',true,'n'],
-    ['% Followed','folShare',false,'pct'],['Backlinks','blAll',false,'n'],['Ref. IPs','refIP',false,'n'],['Subnets (đa dạng IP)','refSub',false,'n'],
-    ['Backlinks / Ref domain','blPerRef',false,'x1'],['Outgoing links','outLinkAll',true,'n']];
+  const defs1=[['Ref. domains','refAll',false,'n'],['Followed','refFol',false,'n'],['Not followed','refNo',true,'n'],['% Followed','folShare',false,'pct']];
+  const defs2=[['Backlinks','blAll',false,'n'],['Ref. IPs','refIP',false,'n'],['Subnets','refSub',false,'n'],['BL/Ref domain','blPerRef',false,'x1'],['Outgoing','outLinkAll',true,'n']];
   const avg=k=>{const v=comps.map(c=>c[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b)/v.length:null;};
   let cmt='';
   const refAvg=avg('refAll');
@@ -1005,7 +1004,9 @@ function blkBacklink(self,comps,all){
   const blLeader=[...all].filter(o=>o.refAll!=null).sort((a,b)=>b.refAll-a.refAll)[0];
   if(blLeader&&blLeader!==self)cmt+=`<b>${blLeader.domain}</b> dẫn đầu độ phủ backlink (${fmt(blLeader.refAll)} ref domains) — authority mạnh, cần theo dõi và rút ngắn khoảng cách bằng digital PR & link báo chí.`;
   else if(blLeader===self)cmt+=`Bạn đang dẫn đầu nhóm về độ phủ backlink — hãy giữ chất lượng và thanh lọc link độc để duy trì lợi thế.`;
-  return miniTable(defs,self,comps,all)+takeaway(cmt);
+  return `<p class="desc" style="margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Referring Domains</p>`+miniTable(defs1,self,comps,all)
+    +`<p class="desc" style="margin-top:18px;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Backlinks & Đa dạng IP</p>`+miniTable(defs2,self,comps,all)
+    +takeaway(cmt);
 }
 function blkChannel(self,comps,all){
   const rows=all.map(o=>{const org=o.traffic||0,paid=o.ptraffic||0,tot=org+paid||1;return{o,org,paid,po:org/tot*100,pp:paid/tot*100};});
@@ -1167,7 +1168,7 @@ function renderReport(ai){
   const clientLogo=cp.src&&cp.style.display!=='none'?`<div class="logo logo-r"><img src="${cp.src}"></div>`:'<div></div>';
   const today=new Date().toLocaleDateString('vi-VN');
 
-  /* ---- comparison table ---- */
+  /* ---- comparison table (split into 2 sub-tables to avoid horizontal overflow) ---- */
   const metricDefs=[
     ['Domain Rating','dr',false],['URL Rating','ur',false],['Ahrefs Rank','rank',true],
     ['Organic Keywords','okw',false],['Từ khóa Top 3','kTop3',false],['Organic Traffic','traffic',false],
@@ -1175,17 +1176,24 @@ function renderReport(ai){
     ['Paid Keywords','pkw',false],['Paid Traffic','ptraffic',false]
   ];
   const activeMetrics=metricDefs.filter(([,key])=>all.some(o=>o[key]!=null));
-  const head=`<th>Website</th>`+activeMetrics.map(([label])=>`<th>${label}</th>`).join('');
-  const body=all.map(o=>{
-    const isS=o===self;
-    const cells=activeMetrics.map(([label,key,low])=>{
-      const vals=all.map(x=>x[key]).filter(x=>x!=null);
-      const best=low?Math.min(...vals):Math.max(...vals);
-      const v=o[key],isBest=v!=null&&v===best,money=key==='value';
-      return `<td${isS?' class="self-col"':''}>${money?fmtMoney(v):fmt(v)} ${isBest?'<span class="badge b-best">#1</span>':''}</td>`;
+  const mid=Math.ceil(activeMetrics.length/2);
+  const mGroup1=activeMetrics.slice(0,mid),mGroup2=activeMetrics.slice(mid);
+  function compTbl(metrics){
+    const head=`<th>Website</th>`+metrics.map(([label])=>`<th>${label}</th>`).join('');
+    const body=all.map(o=>{
+      const isS=o===self;
+      const cells=metrics.map(([label,key,low])=>{
+        const vals=all.map(x=>x[key]).filter(x=>x!=null);
+        const best=low?Math.min(...vals):Math.max(...vals);
+        const v=o[key],isBest=v!=null&&v===best,money=key==='value';
+        return `<td${isS?' class="self-col"':''}>${money?fmtMoney(v):fmt(v)} ${isBest?'<span class="badge b-best">#1</span>':''}</td>`;
+      }).join('');
+      return `<tr><td class="metric${isS?' self-col':''}">${o.domain}${isS?' <span class="badge b-self">Bạn</span>':''}</td>${cells}</tr>`;
     }).join('');
-    return `<tr><td class="metric${isS?' self-col':''}">${o.domain}${isS?' <span class="badge b-self">Bạn</span>':''}</td>${cells}</tr>`;
-  }).join('');
+    return `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  }
+  const compTableHTML=`<p class="desc" style="margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Authority & Organic</p>`+compTbl(mGroup1)
+    +(mGroup2.length?`<p class="desc" style="margin-top:18px;margin-bottom:6px;font-weight:600;font-size:13px;color:var(--muted)">Backlinks & Paid</p>`+compTbl(mGroup2):'');
 
   /* ---- stat cards ---- */
   const stat=(label,key,peerKey,money)=>{
@@ -1271,7 +1279,7 @@ function renderReport(ai){
     geo:secWrap('geo','Tập trung địa lý','Thị trường trọng điểm theo lưu lượng.',blkGeo(self,all)),
     quickwins:secWrap('quickwins','Quick Wins — Việc nên làm trước','Ưu tiên theo mức tác động.',blkQuickwins(a)),
     table:secWrap('table','Bảng so sánh chi tiết','Ô <span class="badge b-best">#1</span> = dẫn đầu chỉ số đó. Cột tô đậm là website của bạn.',
-      `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>${takeaway(tableCmt)}`),
+      `${compTableHTML}${takeaway(tableCmt)}`),
     swot:secWrap('swot','Phân tích SWOT',`Tự động suy luận từ chỉ số SEO của ${self.domain} trong tương quan đối thủ.`,
       `<div class="swot">${swotHTML}</div>`),
     exec:secWrap('exec','Tổng kết &amp; Đề xuất chiến lược','',
