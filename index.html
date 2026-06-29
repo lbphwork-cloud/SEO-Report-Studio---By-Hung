@@ -932,14 +932,18 @@ function legend(segs){return `<div class="legend">${segs.map(s=>`<span><i style=
 
 /* generic compare mini-table */
 function miniTable(defs,self,comps,all){
-  const head=`<th>Chỉ số</th><th class="self-col">${self.domain} <span class="badge b-self">Bạn</span></th>`+comps.map(c=>`<th>${c.domain}</th>`).join('');
+  const activeDefs=defs.filter(([,key])=>all.some(o=>o[key]!=null));
+  const head=`<th>Website</th>`+activeDefs.map(([label])=>`<th>${label}</th>`).join('');
   const f=(v,t)=>v==null?'—':t==='pct'?v.toFixed(0)+'%':t==='x1'?v.toFixed(1):t==='money'?fmtMoney(v):fmt(v);
-  const body=defs.map(([label,key,low,type])=>{
-    const vals=all.map(o=>o[key]).filter(x=>x!=null);
-    if(!vals.length)return '';
-    const best=low?Math.min(...vals):Math.max(...vals);
-    const cell=o=>{const v=o[key];const b=v!=null&&v===best;return `<td${o===self?' class="self-col"':''}>${f(v,type)} ${b?'<span class="badge b-best">#1</span>':''}</td>`;};
-    return `<tr><td class="metric">${label}</td>${cell(self)}${comps.map(cell).join('')}</tr>`;
+  const body=all.map(o=>{
+    const isS=o===self;
+    const cells=activeDefs.map(([,key,low,type])=>{
+      const vals=all.map(x=>x[key]).filter(x=>x!=null);
+      const best=low?Math.min(...vals):Math.max(...vals);
+      const v=o[key],b=v!=null&&v===best;
+      return `<td${isS?' class="self-col"':''}>${f(v,type)} ${b?'<span class="badge b-best">#1</span>':''}</td>`;
+    }).join('');
+    return `<tr><td class="metric${isS?' self-col':''}">${o.domain}${isS?' <span class="badge b-self">Bạn</span>':''}</td>${cells}</tr>`;
   }).join('');
   return `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
@@ -1170,13 +1174,17 @@ function renderReport(ai){
     ['Organic Value ($)','value',false],['Referring Domains','refAll',false],['Backlinks','blAll',false],
     ['Paid Keywords','pkw',false],['Paid Traffic','ptraffic',false]
   ];
-  const head=`<th>Chỉ số</th><th class="self-col">${self.domain} <span class="badge b-self">Bạn</span></th>`+comps.map(c=>`<th>${c.domain}</th>`).join('');
-  const body=metricDefs.map(([label,key,low])=>{
-    const vals=all.map(o=>o[key]).filter(x=>x!=null);
-    const best=low?Math.min(...vals):Math.max(...vals);
-    const cell=o=>{const v=o[key];const isBest=v!=null&&v===best;const money=key==='value';
-      return `<td${o===self?' class="self-col"':''}>${money?fmtMoney(v):fmt(v)} ${isBest?'<span class="badge b-best">#1</span>':''}</td>`;};
-    return `<tr><td class="metric">${label}</td>${cell(self)}${comps.map(cell).join('')}</tr>`;
+  const activeMetrics=metricDefs.filter(([,key])=>all.some(o=>o[key]!=null));
+  const head=`<th>Website</th>`+activeMetrics.map(([label])=>`<th>${label}</th>`).join('');
+  const body=all.map(o=>{
+    const isS=o===self;
+    const cells=activeMetrics.map(([label,key,low])=>{
+      const vals=all.map(x=>x[key]).filter(x=>x!=null);
+      const best=low?Math.min(...vals):Math.max(...vals);
+      const v=o[key],isBest=v!=null&&v===best,money=key==='value';
+      return `<td${isS?' class="self-col"':''}>${money?fmtMoney(v):fmt(v)} ${isBest?'<span class="badge b-best">#1</span>':''}</td>`;
+    }).join('');
+    return `<tr><td class="metric${isS?' self-col':''}">${o.domain}${isS?' <span class="badge b-self">Bạn</span>':''}</td>${cells}</tr>`;
   }).join('');
 
   /* ---- stat cards ---- */
@@ -1280,6 +1288,7 @@ function renderReport(ai){
     <div class="toolbar no-print">
       <button id="editToggle" onclick="toggleEdit(this)">✏️ Bật chỉnh sửa</button>
       <button onclick="window.print()">🖨️ Xuất PDF</button>
+      <button onclick="downloadHTML()">📥 Tải HTML</button>
       <span class="savebar" id="savebar" style="display:none">
         <button onclick="saveReport()">💾 Lưu vào tài khoản</button>
         <span style="font-size:12px;color:var(--muted);align-self:center">— lưu theo "Tên Project" ở ô phía trên</span>
@@ -1319,7 +1328,8 @@ function toggleEdit(btn){
 }
 
 /* ---------------- Download standalone HTML ---------------- */
-$('#dlBtn').addEventListener('click',()=>{
+function downloadHTML(){
+  if(!STATE.self){alert('Chưa có báo cáo.');return;}
   const cv=getComputedStyle(document.documentElement);
   const styleEl=document.querySelector('style').outerHTML;
   const inlineVars=`<style>:root{--primary:${cv.getPropertyValue('--primary')};--sec1:${cv.getPropertyValue('--sec1')};--sec2:${cv.getPropertyValue('--sec2')};--sec3:${cv.getPropertyValue('--sec3')};}</style>`;
@@ -1333,7 +1343,8 @@ ${styleEl}${inlineVars}</head><body><div class="wrap" style="padding-top:28px">$
   const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=`SEO-Report-${STATE.self.domain}-${new Date().toISOString().slice(0,10)}.html`;a.click();
   URL.revokeObjectURL(url);
-});
+}
+$('#dlBtn').addEventListener('click',downloadHTML);
 
 /* ---------------- Cleaned report inner (dùng cho lưu) ---------------- */
 function cleanInner(){
