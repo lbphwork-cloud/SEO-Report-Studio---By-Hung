@@ -958,10 +958,19 @@ function scatter(self,all){
     g+=`<line class="grid-l" x1="${L}" y1="${gy.toFixed(1)}" x2="${W-R}" y2="${gy.toFixed(1)}"/>`;
     g+=`<text class="axl" x="${L-8}" y="${(gy+4).toFixed(1)}" text-anchor="end">${fmt(Math.round(ymax*i/4))}</text>`;
     g+=`<text class="axl" x="${gx.toFixed(1)}" y="${H-B+18}" text-anchor="middle">${Math.round(xmax*i/4)}</text>`;}
-  const pts=all.map(o=>{const isS=o===self,cx=px(o.dr||0),cy=py(o.traffic||0),r=isS?12:9,
-    col=isS?PALETTE[0]:compColor(all.filter(x=>x!==self).indexOf(o));
-    return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="${col}" opacity="${isS?.95:.7}" stroke="#fff" stroke-width="2"/>
-      <text x="${cx.toFixed(1)}" y="${(cy-r-5).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="${isS?700:500}" fill="var(--ink)">${o.domain.slice(0,18)}</text>`;}).join('');
+  const labels=all.map(o=>{const isS=o===self,cx=px(o.dr||0),cy=py(o.traffic||0),r=isS?12:9;
+    return {o,isS,cx,cy,r,lx:cx,ly:cy-r-5,w:o.domain.slice(0,18).length*6,h:13};});
+  labels.sort((a,b)=>a.isS?-1:b.isS?1:0);
+  for(let pass=0;pass<6;pass++){for(let i=0;i<labels.length;i++){for(let j=i+1;j<labels.length;j++){
+    const a=labels[i],b=labels[j];
+    if(Math.abs(a.lx-b.lx)<(a.w+b.w)/2+4 && Math.abs(a.ly-b.ly)<a.h){
+      b.ly=a.ly+a.h+2;
+      if(b.ly>b.cy-4){b.ly=b.cy+b.r+b.h+2;}
+    }}}}
+  const pts=labels.map(l=>{const col=l.isS?PALETTE[0]:compColor(all.filter(x=>x!==self).indexOf(l.o));
+    return `<circle cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r}" fill="${col}" opacity="${l.isS?.95:.7}" stroke="#fff" stroke-width="2"/>
+      <line x1="${l.cx.toFixed(1)}" y1="${l.cy.toFixed(1)}" x2="${l.lx.toFixed(1)}" y2="${(l.ly+4).toFixed(1)}" stroke="var(--muted)" stroke-width=".6" opacity=".4"/>
+      <text x="${l.lx.toFixed(1)}" y="${l.ly.toFixed(1)}" text-anchor="middle" font-size="11" font-weight="${l.isS?700:500}" fill="var(--ink)">${l.o.domain.slice(0,18)}</text>`;}).join('');
   return `<svg class="scatter" viewBox="0 0 ${W} ${H}">${g}
     <line class="grid-l" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"/>
     <text class="axl" x="${W/2}" y="${H-6}" text-anchor="middle" font-weight="600">Domain Rating →</text>
